@@ -1,0 +1,10 @@
+venv/
+.cursor/
+__pycache__/
+build/
+files/
+.env
+.flaskenv
+.streamlit/config.toml
+.db
+README.md
