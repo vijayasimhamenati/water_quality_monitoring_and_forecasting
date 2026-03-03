@@ -8,3 +8,6 @@ files/
 .streamlit/config.toml
 .db
 README.md
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+node_modules/
