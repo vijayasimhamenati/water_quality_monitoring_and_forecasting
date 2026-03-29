@@ -21,13 +21,12 @@ st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 
 # Import page modules
 # from pages import page_01_dashboard, page_02_bulk_analysis, page_03_settings
-from pages import page_01_Dashboard, page_02_Bulk_Analysis, page_03_Settings
+from pages import page_01_Dashboard, page_02_Bulk_Analysis
 
 # Map pages
 pages = {
     "🏠 Dashboard": page_01_Dashboard,
     "📦 Bulk Analysis": page_02_Bulk_Analysis,
-    "⚙️ Settings": page_03_Settings,
 }
 
 # Sidebar header and navigation
