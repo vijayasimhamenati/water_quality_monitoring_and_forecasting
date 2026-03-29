@@ -33,13 +33,8 @@ async def lifespan(app: FastAPI):
     ml_components.clear()
     print("🛑 Server shutting down, memory cleared.")
 
-# Initialize the FastAPI App
-app = FastAPI(
-    title="Water Plant Digital Twin API",
-    description="Enterprise AI backend for Zero-Fail Water Classification and Treated Water Regression.",
-    version="1.0.0",
-    lifespan=lifespan
-)
+# Backward-compatibility shim: redirect to new structured API package
+from backend.api.main import app
 
 # ==========================================
 # 2. DATA VALIDATION (Pydantic Schema)

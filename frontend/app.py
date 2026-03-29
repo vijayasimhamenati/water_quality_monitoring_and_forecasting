@@ -29,8 +29,10 @@ st.title("💧 Water Quality Dashboard")
 st.markdown("### Digital Twin Operations & Early Warning System")
 st.divider()
 
+import os
+
 # Backend API URL (Change to 8080 or 8000 if your FastAPI is running there)
-API_URL = "http://127.0.0.1:9090/analyze"
+API_URL = os.getenv("API_URL", "http://127.0.0.1:9090/api/v1/analyze")
 
 # ==========================================
 # SIDEBAR: RAW WATER INPUTS
