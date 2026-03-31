@@ -10,7 +10,7 @@ from config import (
 
 # Configure page
 st.set_page_config(
-    page_title="Water Quality Digital Twin",
+    page_title="Water Quality Management",
     page_icon=PAGE_ICON,
     layout=LAYOUT,
     initial_sidebar_state=INITIAL_SIDEBAR_STATE,
