@@ -61,8 +61,6 @@ def render_live_dashboard():
     if st.button("🔄 Refresh Now", use_container_width=True):
         refresh_data()
 
-    auto_refresh = st.checkbox("Auto-refresh every 5 seconds", value=True)
-
     if st.session_state.live_data is None:
         refresh_data()
 
@@ -70,15 +68,6 @@ def render_live_dashboard():
 
     if st.session_state.last_refresh:
         st.caption(f"Last updated: {st.session_state.last_refresh.strftime('%Y-%m-%d %H:%M:%S')}")
-
-    if auto_refresh:
-        # Use st_autorefresh where available to avoid streamlit version mismatch
-        try:
-            from streamlit import st_autorefresh
-            st_autorefresh(interval=5000, key="live_dashboard_autorefresh")
-        except Exception:
-            # Fallback: perform manual refresh button action only (no infinite rerun retries)
-            st.info("Auto-refresh unavailable in this Streamlit version; use 'Refresh Now' button.")
 
 
 def render():
