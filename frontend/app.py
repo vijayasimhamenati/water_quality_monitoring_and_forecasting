@@ -145,7 +145,7 @@ st.markdown(header_html, unsafe_allow_html=True)
 # ==========================================
 # HORIZONTAL NAVIGATION BAR
 # ==========================================
-nav_col1, nav_col2, nav_col3 = st.columns([1, 1, 4])
+nav_col1, nav_col2, nav_col3 = st.columns([1, 1, 1])
 
 with nav_col1:
     if st.button(
@@ -167,17 +167,28 @@ with nav_col2:
         st.session_state.current_page = "Bulk Analysis"
         st.rerun()
 
+with nav_col3:
+    if st.button(
+        "📊 Live Dashboard",
+        use_container_width=True,
+        key="nav_live",
+        help="Real-time sensor monitoring"
+    ):
+        st.session_state.current_page = "Live Dashboard"
+        st.rerun()
+
 st.divider()
 
 # ==========================================
 # IMPORT PAGE MODULES
 # ==========================================
-from pages import page_01_Dashboard, page_02_Bulk_Analysis
+from pages import page_01_Dashboard, page_02_Bulk_Analysis, page_03_Live_Dashboard
 
 # Map pages to modules
 pages = {
     "Dashboard": page_01_Dashboard,
     "Bulk Analysis": page_02_Bulk_Analysis,
+    "Live Dashboard": page_03_Live_Dashboard,
 }
 
 # ==========================================

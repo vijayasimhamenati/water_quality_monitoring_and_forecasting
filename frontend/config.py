@@ -119,3 +119,4 @@ import os
 API_BASE_URL = os.getenv("API_URL", "http://127.0.0.1:9090")
 API_HEALTH = f"{API_BASE_URL}/api/{API_VERSION}/health"
 API_ANALYZE = f"{API_BASE_URL}/api/{API_VERSION}/analyze"
+API_LIVE_DASHBOARD = f"{API_BASE_URL}/api/{API_VERSION}/live-dashboard"

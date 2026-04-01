@@ -1,5 +1,6 @@
 from pydantic import BaseModel, ConfigDict, Field
 from typing import Dict
+import datetime
 
 
 class RawWaterInput(BaseModel):
@@ -33,3 +34,16 @@ class AnalyzeResponse(BaseModel):
     status: str
     classification: ClassificationResult
     treated_water_predictions: Dict[str, float]
+
+
+class LiveSensorData(BaseModel):
+    timestamp: datetime.datetime
+    raw_water_metrics: Dict[str, float]
+    classification: ClassificationResult
+    treated_water_predictions: Dict[str, float]
+
+
+class LiveDashboardResponse(BaseModel):
+    status: str
+    current_reading: LiveSensorData
+    recent_readings: list[LiveSensorData]

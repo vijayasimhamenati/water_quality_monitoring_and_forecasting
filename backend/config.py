@@ -4,6 +4,7 @@ class Settings(BaseSettings):
     app_name: str = "Water Plant Digital Twin API"
     version: str = "1.0.0"
     model_base_path: str = "models"
+    data_base_path: str = "data"
     rw_scaler_file: str = "rw_classifier_scaler.pkl"
     rw_classifier_file: str = "rw_classifier.pkl"
     tw_scaler_file: str = "tw_scaler.pkl"

@@ -1,10 +1,12 @@
 from pathlib import Path
 import pandas as pd
 import joblib
-from typing import Dict
+from typing import Dict, List
+import datetime
+import random
 
 from backend.config import settings
-from backend.models.schemas import RawWaterInput, ClassificationResult, AnalyzeResponse
+from backend.models.schemas import RawWaterInput, ClassificationResult, AnalyzeResponse, LiveSensorData, LiveDashboardResponse
 
 
 class ModelService:
@@ -13,6 +15,9 @@ class ModelService:
         self.rw_classifier = None
         self.tw_scaler = None
         self.tw_predictor = None
+        self.rw_data = None
+        self.current_index = 0
+        self.recent_readings: List[LiveSensorData] = []
 
     def load(self):
         base = Path(settings.model_base_path)
@@ -20,6 +25,11 @@ class ModelService:
         self.rw_classifier = joblib.load(base / settings.rw_classifier_file)
         self.tw_scaler = joblib.load(base / settings.tw_scaler_file)
         self.tw_predictor = joblib.load(base / settings.tw_predictor_file)
+
+        # Load RW classification data for live simulation
+        data_base = Path(__file__).parent.parent.parent / settings.data_base_path
+        data_path = data_base / "rw_classification_data.csv"
+        self.rw_data = pd.read_csv(data_path)
 
     def predict(self, input_data: RawWaterInput) -> AnalyzeResponse:
         if self.rw_scaler is None or self.rw_classifier is None:
@@ -60,6 +70,68 @@ class ModelService:
             status="success",
             classification=classification,
             treated_water_predictions=treated_metrics
+        )
+
+    def get_live_sensor_reading(self) -> LiveSensorData:
+        """Get next sensor reading from RW classification data in loop"""
+        if self.rw_data is None:
+            raise RuntimeError("RW classification data not loaded")
+
+        # Get current row, loop back to start if at end
+        if self.current_index >= len(self.rw_data):
+            self.current_index = 0
+
+        row = self.rw_data.iloc[self.current_index]
+        self.current_index += 1
+
+        # Extract RW metrics
+        rw_metrics = {
+            "RW pH": float(row["RW pH"]),
+            "RW Tur": float(row["RW Tur"]),
+            "RW Colour": float(row["RW Colour"]),
+            "RW TDS": float(row["RW TDS"]),
+            "RW Iron": float(row["RW Iron"]),
+            "RW Hardness": float(row["RW Hardness"]),
+            "RW S Solids": float(row["RW S Solids"]),
+            "RW Aluminium": float(row["RW Aluminium"]),
+            "RW Chloride": float(row["RW Chloride"]),
+            "RW Manganese": float(row["RW Manganese"]),
+            "RW Conductivity": float(row["RW Conductivity"]),
+            "RW Calcium": float(row["RW Calcium"]),
+            "RW Magnesium": float(row["RW Magnesium"]),
+            "RW Alkalinity": float(row["RW Alkalinity"]),
+            "RW Ammonia as N": float(row["RW Ammonia as N"])
+        }
+
+        # Create RawWaterInput from the metrics
+        input_data = RawWaterInput(**rw_metrics)
+
+        # Get prediction
+        prediction = self.predict(input_data)
+
+        # Create LiveSensorData
+        live_data = LiveSensorData(
+            timestamp=datetime.datetime.now(),
+            raw_water_metrics=rw_metrics,
+            classification=prediction.classification,
+            treated_water_predictions=prediction.treated_water_predictions
+        )
+
+        # Store in recent readings (keep last 60 readings for 1 hour of data)
+        self.recent_readings.append(live_data)
+        if len(self.recent_readings) > 60:
+            self.recent_readings.pop(0)
+
+        return live_data
+
+    def get_live_dashboard_data(self) -> LiveDashboardResponse:
+        """Get current reading and recent readings for live dashboard"""
+        current_reading = self.get_live_sensor_reading()
+
+        return LiveDashboardResponse(
+            status="success",
+            current_reading=current_reading,
+            recent_readings=self.recent_readings[-10:]  # Last 10 readings
         )
 
 
